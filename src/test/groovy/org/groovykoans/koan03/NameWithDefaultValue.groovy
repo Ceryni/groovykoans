@@ -21,7 +21,13 @@ class NameWithDefaultValue {
 
     // ------------ START EDITING HERE ----------------------
 
+    NameWithDefaultValue (name = 'Anonymous') {
+        this.name = name
+    }
 
+    public getName() {
+        return name ?: 'Anonymous'
+    }
     // ------------ STOP EDITING HERE  ----------------------
 
 }

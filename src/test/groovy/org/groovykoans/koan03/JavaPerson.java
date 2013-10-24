@@ -55,4 +55,8 @@ public class JavaPerson implements Serializable {
     public String getSsn() {
         return ssn;
     }
+
+    public String getFirstName() {
+        return firstName;
+    }
 }
