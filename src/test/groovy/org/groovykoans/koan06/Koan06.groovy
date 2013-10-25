@@ -45,12 +45,12 @@ class Koan06 extends GroovyTestCase {
         // Groovy-fy the above code, using StringBuilder and with() to get the same result in Groovy
         String groovyResult
         // ------------ START EDITING HERE ----------------------
-        new StringBuilder().with {
-            append("roses are #FF0000\\n");
+        groovyResult = new StringBuilder().with {
+            append(/roses are #FF0000\n/);
             append("violets are #0000FF\\n");
             append("all my base\\n")
             append("are belong to you\\n")
-            groovyResult = it.toString()
+            it.toString()
         }
 
         // ------------ STOP EDITING HERE  ----------------------
@@ -87,13 +87,7 @@ class Koan06 extends GroovyTestCase {
         int count = 0
         // ------------ START EDITING HERE ----------------------
         new File('src').eachFileRecurse(FileType.FILES) {
-            def checked = false
-            it.eachLine {
-                if (it.contains('Lorem') && !checked) {
-                    count++
-                    checked = true
-                }
-            }
+            if (it.text.contains('Lorem')) count++
         }
 
         // ------------ STOP EDITING HERE  ----------------------
@@ -108,16 +102,32 @@ class Koan06 extends GroovyTestCase {
         // ------------ START EDITING HERE ----------------------
         primesBetween200And250 =
             (200..250).findAll { x ->
-                def isPrime = true
-                (2..x - 1).each { y ->
-                    x % y == 0 ? isPrime = false : isPrime
+                (2..x - 1).every { y ->
+                    x % y != 0
                 }
-                isPrime
             }
 
         // ------------ STOP EDITING HERE  ----------------------
         assert primesBetween200And250 == [211, 223, 227, 229, 233, 239, 241]
 
+    }
+
+    void test05_everyconstruct() {
+        // There are lots of useful Groovy Constructs, if something feels kludgy (like a previous solution above),
+        // chances are high that there's a better construct to use. Above, I wanted to map a condition to a collection
+        // and AND the conditions, every accomplishes this...
+
+        assert [2, 4, 6, 8, 10].every {
+            it % 2 == 0
+        }
+
+        // The result of every produces a single boolean after testing all elements in the collection and can be
+        // manipulated like any other boolean...
+        assert ![2, 4, 6, 7, 8, 10].every {
+            it % 2 == 0
+        }
+
+        assert [2, 4, 6, 8].every {it % 2 == 0} && [10, 12, 14, 16].every {it % 2 == 0}
     }
 
 }
