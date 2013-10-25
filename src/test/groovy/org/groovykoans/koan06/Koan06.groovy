@@ -112,7 +112,7 @@ class Koan06 extends GroovyTestCase {
 
     }
 
-    void test05_everyconstruct() {
+    void test05_every_construct() {
         // There are lots of useful Groovy Constructs, if something feels kludgy (like a previous solution above),
         // chances are high that there's a better construct to use. Above, I wanted to map a condition to a collection
         // and AND the conditions, every accomplishes this...

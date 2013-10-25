@@ -34,13 +34,28 @@ class Koan08 extends GroovyTestCase {
         // - If it's an integer between 1-100, divide it by two
         // - If it's a string that ends with 'ee', replace its end with 'ey'
         // - Otherwise return the input
-
         def magicClosure = { input ->
             // ------------ START EDITING HERE ----------------------
+            println input
+            switch (input) {
+                case 1..100:
+                    input/2
+                    break;
+                case String:
+                    (input as String).replaceAll(/.*ee/) {
+                        println 'Found one'
+                        'ey'
+                    }
+
+                default:
+                    input
+            }
+
 
 
             // ------------ STOP EDITING HERE  ----------------------
         }
+
         [5: 2.5, 'smile': 'smile', 'smilee': 'smiley', 'heehee': 'heehey'].each { key, expectedValue ->
             assert magicClosure(key) == expectedValue
         }
@@ -96,8 +111,9 @@ class Koan08 extends GroovyTestCase {
         // Create a closure that returns two random integers in a given range
         def generateTwoRandomInts=  { int maxInt ->
             // ------------ START EDITING HERE ----------------------
+            Random random = new Random()
 
-
+            [random.nextInt(maxInt), random.nextInt(maxInt)]
             // ------------ STOP EDITING HERE  ----------------------
         }
 
