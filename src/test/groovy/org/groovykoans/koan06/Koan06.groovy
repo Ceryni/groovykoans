@@ -13,8 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
- 
+
 package org.groovykoans.koan06
+
+import groovy.io.FileType
 
 /**
  * Koan06 - More closures
@@ -65,9 +67,11 @@ class Koan06 extends GroovyTestCase {
         def differentTypes = [1, 'String', "GString", 'a', 'Another string', 0]
         def uniqueTypes = []
         // ------------ START EDITING HERE ----------------------
+
         uniqueTypes = differentTypes.collect {
-             it.class
+            it.class
         }
+
         uniqueTypes.unique()
 
         // ------------ STOP EDITING HERE  ----------------------
@@ -82,7 +86,15 @@ class Koan06 extends GroovyTestCase {
         // under the src directory
         int count = 0
         // ------------ START EDITING HERE ----------------------
-
+        new File('src').eachFileRecurse(FileType.FILES) {
+            def checked = false
+            it.eachLine {
+                if (it.contains('Lorem') && !checked) {
+                    count++
+                    checked = true
+                }
+            }
+        }
 
         // ------------ STOP EDITING HERE  ----------------------
         assert count == 3
@@ -94,7 +106,14 @@ class Koan06 extends GroovyTestCase {
         // range objects, store all the prime numbers between 200 and 250 in the target variable
         def primesBetween200And250 = []
         // ------------ START EDITING HERE ----------------------
-
+        primesBetween200And250 =
+            (200..250).findAll { x ->
+                def isPrime = true
+                (2..x - 1).each { y ->
+                    x % y == 0 ? isPrime = false : isPrime
+                }
+                isPrime
+            }
 
         // ------------ STOP EDITING HERE  ----------------------
         assert primesBetween200And250 == [211, 223, 227, 229, 233, 239, 241]
