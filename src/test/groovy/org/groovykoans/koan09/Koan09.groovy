@@ -16,6 +16,8 @@
  
 package org.groovykoans.koan09
 
+import groovy.xml.MarkupBuilder
+
 /**
  * Koan09 - Meta-programming (Meta Object Protocol)
  *
@@ -40,6 +42,11 @@ class Koan09 extends GroovyTestCase {
         // add a sayHello() method that returns "Hello from ${firstName}"
         def expando = new Expando()
         // ------------ START EDITING HERE ----------------------
+        expando.firstName = 'Some Value'
+        expando.sayHello = {
+            println "Hello from ${firstName}"
+            "Hello from ${firstName}"
+        }
 
 
         // ------------ STOP EDITING HERE  ----------------------
@@ -57,7 +64,8 @@ class Koan09 extends GroovyTestCase {
         // Using the NukeInterceptor, make sure that only admin is allowed to run this service.
         def proxy
         // ------------ START EDITING HERE ----------------------
-
+        proxy = ProxyMetaClass.getInstance(SensitiveService)
+        proxy.interceptor = new NukeInterceptor()
 
         // ------------ STOP EDITING HERE  ----------------------
 
@@ -78,7 +86,7 @@ class Koan09 extends GroovyTestCase {
         // In Java, we only have the 'this' keyword. It returns the current instance. Groovy does exactly the same.
         def expectedThisClassName
         // ------------ START EDITING HERE ----------------------
-
+        expectedThisClassName = 'org.groovykoans.koan09.Koan09'
 
         // ------------ STOP EDITING HERE  ----------------------
         assert this.class.name == expectedThisClassName
@@ -107,6 +115,8 @@ class Koan09 extends GroovyTestCase {
         // Can you figure out what the values for weightOnEarth and weightOnMoon are?
         def expectedWeightOnMoon, expectedWeightOnEarth
         // ------------ START EDITING HERE ----------------------
+        expectedWeightOnMoon = 1.655
+        expectedWeightOnEarth = 10
 
 
         // ------------ STOP EDITING HERE  ----------------------
@@ -117,7 +127,7 @@ class Koan09 extends GroovyTestCase {
         // http://stackoverflow.com/questions/8120949/what-does-delegate-mean-in-groovy/8121750#8121750
         // Create a fake environment using the technique in the link to create a gravity of 6
         // ------------ START EDITING HERE ----------------------
-
+        calculateWeight.delegate = [gravity:6]
 
         // ------------ STOP EDITING HERE  ----------------------
         def weightOnFakePlanet = calculateWeight(10)
@@ -146,6 +156,11 @@ class Koan09 extends GroovyTestCase {
         assert robot.x == -1
         assert robot.y == -1
 
+        def allMethods = (Robot.metaClass.methods + Robot.metaClass.metaMethods).name.sort().unique()
+        println allMethods
+
+        def upMethod = Robot.metaClass.getMetaMethod('up')
+
         // Wouldn't it be nicer if we could create shorthand versions for combo moves? For example, goLeftLeftRightDown()?
         // Read about invokeMethod() here: http://groovy.codehaus.org/Using+invokeMethod+and+getProperty
         // invokeMethod() allows you to intercept all method calls, even if the method doesn't exist.
@@ -157,6 +172,20 @@ class Koan09 extends GroovyTestCase {
         // And what about this option?
         robot.goDownDownDownDown()
         assert [robot.x, robot.y] == [0, -6]
+    }
+
+
+    void test04_01_RegexTesting() {
+        def methodRegex = /(Left|Right|Up|Down)/
+        def testMethodName = 'goLeftRightRightDownUp'
+
+        def result = testMethodName.findAll(methodRegex)
+
+        assert result[0] == 'Left'
+        assert result[1] == 'Right'
+        assert result[2] == 'Right'
+        assert result[3] == 'Down'
+        assert result[4] == 'Up'
     }
 
     void test05_AddMethodsToExistingObjects() {
@@ -171,13 +200,29 @@ class Koan09 extends GroovyTestCase {
         //   - otherwise, return the number itself (as a String)
 
         // ------------ START EDITING HERE ----------------------
-
+        Integer.metaClass.fizzBuzz << {
+            delegate % 3 == 0 && delegate % 5 == 0 ? 'FizzBuzz' : delegate % 3 == 0 ? 'Fizz' : delegate % 5 == 0 ? 'Buzz' : "${delegate}"
+        }
 
         // ------------ STOP EDITING HERE  ----------------------
         def fizzBuzzes = (1..15).collect { it.fizzBuzz() }
         def expectedFizzBuzzes = ['1', '2', 'Fizz', '4', 'Buzz', 'Fizz', '7', '8', 'Fizz',
                 'Buzz', '11', 'Fizz', '13', '14', 'FizzBuzz']
         assert fizzBuzzes == expectedFizzBuzzes
+    }
+
+    void test06_MarkUpBuilderPlay() {
+        new MarkupBuilder().root {
+            foo(name : 'Bob') {
+                monkey('Rulez')
+            }
+        } == '''\
+                <root>
+                    <foo name='Bob'>
+                        <monkey>Rulez</monkey>
+                    </foo>
+                </root>
+             '''.stripIndent()
     }
 
 }

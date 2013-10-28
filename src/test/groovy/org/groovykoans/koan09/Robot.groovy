@@ -16,11 +16,43 @@
  
 package org.groovykoans.koan09
 
-import org.codehaus.groovy.runtime.InvokerHelper
-
-class Robot {
+class Robot implements GroovyInterceptable{
     // ------------ START EDITING HERE ----------------------
 
+    def x,y
+
+    Robot() {
+        x = 0
+        y = 0
+    }
+
+    def methodRegex = /(?i)(Left|Right|Up|Down)/
+
+
+    def invokeMethod(String name, args) {
+        def parsedMultiMethod = name.findAll(methodRegex)
+
+        parsedMultiMethod.each {
+            def metaMethod = delegate.metaClass.getMetaMethod(it.toLowerCase())
+            metaMethod.invoke(this, args)
+        }
+    }
+
+   def left() {
+        this.x--
+    }
+
+    def right() {
+        this.x++
+    }
+
+    def up() {
+        this.y++
+    }
+
+    def down() {
+        this.y--
+    }
 
     // ------------ STOP EDITING HERE  ----------------------
 }
