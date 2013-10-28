@@ -16,7 +16,9 @@
 
 package org.groovykoans.koan10
 
+import groovy.util.slurpersupport.GPathResult
 import groovy.xml.MarkupBuilder
+import org.xml.sax.XMLReader
 
 /**
  * Koan10 - Slurpers and Builders
@@ -43,6 +45,8 @@ class Koan10 extends GroovyTestCase {
         // and find out how many movies are listed.
         def movieCount
         // ------------ START EDITING HERE ----------------------
+        def root = new XmlSlurper().parse(new File("src/test/groovy/org/groovykoans/koan10/movies.xml"))
+        movieCount = root.movie.size()
 
 
         // ------------ STOP EDITING HERE  ----------------------
@@ -52,6 +56,11 @@ class Koan10 extends GroovyTestCase {
         // Hint: pay attention to the type of objects you're getting.
         List<String> moviesWithThe = []
         // ------------ START EDITING HERE ----------------------
+        root.movie.findAll {
+            it.title.toString() ==~ /(?i)(.*the.*)/
+        }.collect(moviesWithThe) {
+            it.title.toString()
+        }
 
 
         // ------------ STOP EDITING HERE  ----------------------
@@ -60,7 +69,10 @@ class Koan10 extends GroovyTestCase {
         // How many movie ids have a value greater than 5?
         def movieIdsGreaterThan5
         // ------------ START EDITING HERE ----------------------
-
+        movieIdsGreaterThan5 = 0
+        root.movie.each {
+            if(it.@id.toInteger() > 5) movieIdsGreaterThan5++
+        }
 
         // ------------ STOP EDITING HERE  ----------------------
         assert movieIdsGreaterThan5 == 2
@@ -74,7 +86,10 @@ class Koan10 extends GroovyTestCase {
 
         List<String> sortedList = []
         // ------------ START EDITING HERE ----------------------
-
+        def root = new XmlSlurper().parse(new File("src/test/groovy/org/groovykoans/koan10/movies.xml"))
+        sortedList = root.movie.list().sort {it.year.toInteger()}.sort {it.year.toString() + it.title.toString()}.collect {
+            it.title.text()
+        }
 
         // ------------ STOP EDITING HERE  ----------------------
         assert sortedList == ['Conan the Barbarian', 'The Terminator', 'Predator',

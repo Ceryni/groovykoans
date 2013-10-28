@@ -31,8 +31,9 @@ class NukeInterceptor implements Interceptor {
     @Override
     Object afterInvoke(Object obj, String methodName, Object[] args, Object result) {
         // ------------ START EDITING HERE ----------------------
+        // After Review, could also reset the authorization check here instead in the before...
+        //isAuthorized = true
         result
-
         // ------------ STOP EDITING HERE  ----------------------
     }
 

@@ -44,7 +44,6 @@ class Koan09 extends GroovyTestCase {
         // ------------ START EDITING HERE ----------------------
         expando.firstName = 'Some Value'
         expando.sayHello = {
-            println "Hello from ${firstName}"
             "Hello from ${firstName}"
         }
 
