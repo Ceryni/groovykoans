@@ -114,6 +114,14 @@ class Koan10 extends GroovyTestCase {
         // Using MarkupBuilder, create the above html as String
         def html
         // ------------ START EDITING HERE ----------------------
+        def stringWriter = new StringWriter()
+        new MarkupBuilder(stringWriter).html {
+            body {
+                h1('title')
+            }
+        }
+        html = stringWriter.toString()
+
 
 
         // ------------ STOP EDITING HERE  ----------------------
@@ -131,7 +139,15 @@ class Koan10 extends GroovyTestCase {
 
         String convertedXml
         // ------------ START EDITING HERE ----------------------
+        def xmlSlurped = new XmlSlurper().parse(new File("src/test/groovy/org/groovykoans/koan10/movies.xml"))
+        def stringWriter = new StringWriter()
+        new MarkupBuilder(stringWriter).movies {
+            xmlSlurped.movie.each {
+                movie(id : "${it.@id.text()}", title : "${it.title.text()}", year : "${it.year.text()}")
+            }
+        }
 
+        convertedXml = stringWriter.toString()
 
         // ------------ STOP EDITING HERE  ----------------------
         def expected = """|<movies>
@@ -166,7 +182,7 @@ class Koan10 extends GroovyTestCase {
         // http://ant.apache.org/manual/Tasks/copy.html
         def baseDir = 'src/test/groovy/org/groovykoans/koan10'
         // ------------ START EDITING HERE ----------------------
-
+        def ant = new AntBuilder().copy(file : "${baseDir}/movies.xml", tofile: "${baseDir}/movies_copy.xml")
 
         // ------------ STOP EDITING HERE  ----------------------
         assert new File("${baseDir}/movies_copy.xml").exists()
@@ -180,8 +196,8 @@ class Koan10 extends GroovyTestCase {
         def baseDir = 'src/test/groovy/org/groovykoans/koan10'
         def actualChecksum
         // ------------ START EDITING HERE ----------------------
-
-
+        actualChecksum = new AntBuilder().checksum(file: "${baseDir}/movies.xml", property: 'moviesChecksum')
+                                         .project.properties.moviesChecksum
         // ------------ STOP EDITING HERE  ----------------------
         assert actualChecksum == '9160b6a6555e31ebc01f30c1db7e1277'
     }
